@@ -9,6 +9,7 @@
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #fffeaf;
+            background-image: url('https://assets.pinterest.com/ext/embed.html?id=675399275363907558'); /* Fondo con textura de bocetos */
             margin: 0;
             padding: 0;
             text-align: center;
@@ -49,6 +50,24 @@
             text-align: center;
         }
 
+        .week::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-top: 40px solid #ff8fab;
+            transition: transform 0.3s;
+        }
+
+        .week.unlocked::before {
+            transform: rotateX(180deg) translateY(15px);
+            border-top: 40px solid #ffd3e0;
+        }
+
         .week.unlocked {
             background: #ffb6c1;
         }
@@ -62,43 +81,11 @@
             pointer-events: none;
             opacity: 0.6;
         }
-
-        /* 🔹 Notificación flotante */
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255, 91, 181, 0.9);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-            display: none;
-            font-size: 1rem;
-            font-weight: bold;
-            z-index: 1000;
-        }
-
-        .notification.show {
-            display: block;
-            animation: fadeInOut 3s ease-in-out;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translate(-50%, -20px); }
-            10% { opacity: 1; transform: translate(-50%, 0); }
-            90% { opacity: 1; transform: translate(-50%, 0); }
-            100% { opacity: 0; transform: translate(-50%, -20px); }
-        }
     </style>
 </head>
 <body>
     <h1>Contando las semanas para verte</h1>
     <div id="calendar"></div>
-
-    <!-- 🔹 Notificación flotante -->
-    <div id="notification" class="notification"></div>
 
     <script>
         const totalWeeks = 18;
@@ -126,9 +113,6 @@
                     };
                 } else {
                     weekDiv.classList.add("locked");
-                    weekDiv.onclick = function () {
-                        showNotification("⛔ Esta carta aún está bloqueada. Espérate a la próxima semana.");
-                    };
                 }
 
                 const weekNumber = document.createElement("span");
@@ -137,31 +121,21 @@
                 calendarDiv.appendChild(weekDiv);
             }
         }
-
         function openCard(week) {
-            const baseURL = "https://paulagarciacirre.github.io/calendariomario/cartas/";  
+            const baseURL = "https://paulagarciacirre.github.io/calendariomario/cartas/";  // ⚠️ Reemplaza con tu URL real
             const cardLinks = [];
 
-            for (let i = 1; i <= totalWeeks; i++) {
+            for (let i = 1; i <= 18; i++) {
                 cardLinks.push(`${baseURL}Semana${i}.pdf`);
             }
 
             if (week <= getCurrentWeek()) {
                 window.open(cardLinks[week - 1], '_blank');
             } else {
-                showNotification("⛔ Esta carta aún está bloqueada. Espérate a la próxima semana.");
+                alert("Esta carta aún está bloqueada. Espérate a la próxima semana.");
             }
         }
 
-        function showNotification(message) {
-            const notification = document.getElementById("notification");
-            notification.textContent = message;
-            notification.classList.add("show");
-
-            setTimeout(() => {
-                notification.classList.remove("show");
-            }, 3000);
-        }
 
         generateCalendar();
     </script>
