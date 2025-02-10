@@ -92,7 +92,7 @@
 
         function getCurrentWeek() {
             const today = new Date();
-            const startDate = new Date("2025-02-07");
+            const startDate = new Date("2025-02-03");
             const diff = today - startDate;
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             return Math.floor(days / 7) + 1;
