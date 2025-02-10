@@ -78,17 +78,123 @@
 
         .week.locked {
             background: #f5c7d6;
-            pointer-events: none;
             opacity: 0.6;
         }
+
+        /* Estilos para el popup con el sobre */
+        #notification {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 200px;
+            background-color: #ffd3e0;
+            border: 2px solid #ff8fab;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            color: #ff5db5;
+            font-size: 1.5rem;
+            opacity: 0; /* Inicialmente oculto */
+            overflow: hidden;
+        }
+
+        #notification.open {
+            display: block; /* Muestra el popup */
+            opacity: 1;
+            animation: openEnvelope 1s forwards; /* Animación de apertura */
+        }
+
+        /* Animación de apertura del sobre */
+        @keyframes openEnvelope {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                height: 200px;
+                width: 300px;
+                padding-top: 50px; /* Inicio con la solapa cerrada */
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                height: 140px;
+                padding-top: 50px;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                height: 200px;
+                padding-top: 50px;
+            }
+        }
+
+        /* Solapa del sobre que se abre */
+        #notification .flap {
+            width: 100%;
+            height: 50px;
+            background-color: #ff8fab;
+            border-top: 2px solid #ff5db5;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: top center;
+            transform: rotateX(90deg); /* Inicialmente cerrado */
+            transition: transform 0.5s ease;
+        }
+
+        #notification.open .flap {
+            transform: rotateX(0deg); /* Abre la solapa */
+        }
+
+        /* Estilo para el mensaje */
+        #notification .message {
+            margin-top: 60px; /* Desplazamos el mensaje hacia abajo para que no se sobreponga a la solapa */
+            opacity: 0;
+            animation: showMessage 1s forwards 0.5s;
+        }
+
+        @keyframes showMessage {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Botón de cerrar */
+        #notification .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff5db5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        #notification .close-btn:hover {
+            background-color: #ff8fab;
+        }
+
     </style>
 </head>
 <body>
     <h1>Contando las semanas para verte</h1>
     <div id="calendar"></div>
 
+    <!-- Popup de la carta bloqueada -->
+    <div id="notification">
+        <div class="flap"></div>
+        <p class="message">⛔ Impaciente, tendrás que soportarme otra semana más para ver la cartaa</p>
+        <button class="close-btn" onclick="closeNotification()">Cerrar</button>
+    </div>
+
     <script>
-        const totalWeeks = 18;
+        const totalWeeks = 19;
 
         function getCurrentWeek() {
             const today = new Date();
@@ -113,6 +219,10 @@
                     };
                 } else {
                     weekDiv.classList.add("locked");
+                    // Añadimos el evento de clic para las casillas bloqueadas
+                    weekDiv.onclick = function () {
+                        showLockedMessage();
+                    };
                 }
 
                 const weekNumber = document.createElement("span");
@@ -121,6 +231,7 @@
                 calendarDiv.appendChild(weekDiv);
             }
         }
+
         function openCard(week) {
             const baseURL = "https://paulagarciacirre.github.io/calendariomario/cartas/";  // ⚠️ Reemplaza con tu URL real
             const cardLinks = [];
@@ -132,10 +243,23 @@
             if (week <= getCurrentWeek()) {
                 window.open(cardLinks[week - 1], '_blank');
             } else {
-                alert("Esta carta aún está bloqueada. Espérate a la próxima semana.");
+                showLockedMessage();
             }
         }
 
+        // Función para mostrar el popup con el mensaje de que la carta está bloqueada
+        function showLockedMessage() {
+            const notification = document.getElementById("notification");
+            notification.style.display = "block"; // Muestra el popup
+            notification.classList.add("open"); // Activa la animación de apertura
+        }
+
+        // Función para cerrar el popup
+        function closeNotification() {
+            const notification = document.getElementById("notification");
+            notification.style.display = "none"; // Oculta el popup
+            notification.classList.remove("open"); // Desactiva la animación de apertura
+        }
 
         generateCalendar();
     </script>
